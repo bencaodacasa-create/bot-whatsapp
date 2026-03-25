@@ -27,7 +27,7 @@ async function startBot() {
 
     if (connection === "connecting") {
       try {
-        const code = await sock.requestPairingCode("559681141316"); // 🔥 TROQUE PELO SEU NÚMERO
+        const code = await sock.requestPairingCode("559684055298"); // 🔥 TROQUE PELO SEU NÚMERO
         console.log("🔑 Código de pareamento:", code);
       } catch (err) {
         console.log("Erro ao gerar código:", err);
