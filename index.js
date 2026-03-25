@@ -4,6 +4,7 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// servidor web (Render não derrubar)
 app.get("/", (req, res) => {
   res.send("Bot rodando 🚀");
 });
@@ -16,15 +17,21 @@ async function startBot() {
   const { state, saveCreds } = await useMultiFileAuthState("auth");
 
   const sock = makeWASocket({
-    auth: state
+    auth: state,
+    printQRInTerminal: false
   });
 
-  // 🔥 ADICIONA ISSO
-  sock.ev.on("connection.update", (update) => {
-    const { connection, qr } = update;
+  // 🔑 CONEXÃO + CÓDIGO DE PAREAMENTO
+  sock.ev.on("connection.update", async (update) => {
+    const { connection } = update;
 
-    if (qr) {
-      console.log("QR Code:", qr);
+    if (connection === "connecting") {
+      try {
+        const code = await sock.requestPairingCode("559681141316"); // 🔥 TROQUE PELO SEU NÚMERO
+        console.log("🔑 Código de pareamento:", code);
+      } catch (err) {
+        console.log("Erro ao gerar código:", err);
+      }
     }
 
     if (connection === "open") {
@@ -36,8 +43,10 @@ async function startBot() {
     }
   });
 
+  // salva sessão
   sock.ev.on("creds.update", saveCreds);
 
+  // responder mensagens
   sock.ev.on("messages.upsert", async ({ messages }) => {
     const msg = messages[0];
     if (!msg.message) return;
