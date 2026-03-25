@@ -1,4 +1,17 @@
 const { default: makeWASocket, useMultiFileAuthState } = require("@whiskeysockets/baileys");
+const express = require("express");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// servidor web (necessário pro Render não derrubar)
+app.get("/", (req, res) => {
+  res.send("Bot rodando 🚀");
+});
+
+app.listen(PORT, () => {
+  console.log("Servidor web ativo");
+});
 
 async function startBot() {
   const { state, saveCreds } = await useMultiFileAuthState("auth");
@@ -16,37 +29,9 @@ async function startBot() {
     const jid = msg.key.remoteJid;
     const texto = msg.message.conversation || "";
 
-    // INÍCIO
     if (texto.toLowerCase() === "oi") {
       await sock.sendMessage(jid, {
-        text: "Olá 👋 Bem-vindo!\n\nQual a data do seu evento?"
-      });
-    }
-
-    // DATA
-    else if (texto.includes("/")) {
-      await sock.sendMessage(jid, {
-        text: "Perfeito 🎉\n\nQual o local do evento?"
-      });
-    }
-
-    // LOCAL
-    else if (texto.length > 3) {
-      await sock.sendMessage(jid, {
-        text: "Temos disponível:\n\n🎈 Pula-pula R$150\n🚚 Carretinha R$300\n\nQual você deseja?"
-      });
-    }
-
-    // ESCOLHA
-    if (texto.toLowerCase().includes("pula")) {
-      await sock.sendMessage(jid, {
-        text: "Perfeito 😍\n\nPara reservar, pague o sinal de R$50:\nhttps://link.mercadopago.com.br/seulink"
-      });
-    }
-
-    if (texto.toLowerCase().includes("carretinha")) {
-      await sock.sendMessage(jid, {
-        text: "Perfeito 😍\n\nPara reservar, pague o sinal de R$50:\nhttps://link.mercadopago.com.br/seulink"
+        text: "Olá 👋 Qual a data do seu evento?"
       });
     }
   });
