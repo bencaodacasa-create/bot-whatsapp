@@ -4,7 +4,6 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// servidor web (necessário pro Render não derrubar)
 app.get("/", (req, res) => {
   res.send("Bot rodando 🚀");
 });
@@ -18,6 +17,23 @@ async function startBot() {
 
   const sock = makeWASocket({
     auth: state
+  });
+
+  // 🔥 ADICIONA ISSO
+  sock.ev.on("connection.update", (update) => {
+    const { connection, qr } = update;
+
+    if (qr) {
+      console.log("QR Code:", qr);
+    }
+
+    if (connection === "open") {
+      console.log("✅ Bot conectado ao WhatsApp!");
+    }
+
+    if (connection === "close") {
+      console.log("❌ Conexão fechada");
+    }
   });
 
   sock.ev.on("creds.update", saveCreds);
